@@ -68,4 +68,8 @@ npm run build
 - 字段、状态、动作与流转目标集中在 `frontend/src/data/modules.ts`；示例数据在
   `frontend/src/data/seed.ts`。
 - 状态流转只允许在 `local-service.ts` 里改，页面组件不做业务判断。
+- 业务数据、处置台账、版本号打包成单个 blob 原子落库（键
+  `forest-fire-patrol:entries`）。内存缓存带版本号，每次取数都与落库值校验，版本落后即
+  作废重读；写入失败会回到缓存校验点重试，动作与台账记录同生共死。
+- 处置台账（`/ledger`）是动作的第二个入口：任意模块页完成一次动作，台账同步多一份记录。
 - 想回到初始数据：清掉浏览器里 `forest-fire-patrol:entries` 这一项，或调用 `resetModule(模块)`。

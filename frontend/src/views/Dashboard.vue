@@ -24,10 +24,29 @@
           <td>{{ row.name }}</td>
           <td>{{ row.created }}</td>
           <td>{{ row.pending }}</td>
-          <td>{{ row.abnormal }}</td>
+          <td>
+            <span :class="row.abnormal > 0 ? 'error-text' : ''">{{ row.abnormal }}</span>
+          </td>
         </tr>
       </tbody>
     </table>
+
+    <section class="abnormal-panel">
+      <h3>异常面板</h3>
+      <p v-if="!abnormalEvents.length" class="page-desc">当前没有异常记录。</p>
+      <table v-else class="data-table">
+        <thead>
+          <tr><th>业务模块</th><th>编号</th><th>当前状态</th></tr>
+        </thead>
+        <tbody>
+          <tr v-for="event in abnormalEvents" :key="`${event.module}-${event.id}`">
+            <td>{{ event.module }}</td>
+            <td>{{ event.id }}</td>
+            <td class="error-text">{{ event.status }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
     <footer class="page-foot">
       <span>数据保存在本机浏览器里，换浏览器或清缓存会回到示例数据</span>
     </footer>
@@ -37,16 +56,18 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 
-import { loadOverview } from '@/api/local-service'
+import { loadOverview, listAbnormalEvents } from '@/api/local-service'
 import type { OverviewResult } from '@/data/types'
 
 const cards = ref<OverviewResult['cards']>([])
 const moduleRows = ref<OverviewResult['modules']>([])
+const abnormalEvents = ref<ReturnType<typeof listAbnormalEvents>>([])
 
 function refresh() {
   const payload = loadOverview()
   cards.value = payload.cards
   moduleRows.value = payload.modules
+  abnormalEvents.value = listAbnormalEvents()
 }
 
 onMounted(refresh)

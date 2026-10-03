@@ -32,6 +32,20 @@ export type ActionResult = {
   message: string
 }
 
+// 处置台账：一条动作落库一条记录，任何入口执行都写同一份。
+export type LedgerEntry = {
+  id: number
+  module: string
+  entity: string
+  rowId: number
+  action: string
+  fromStatus: string
+  toStatus: string
+  abnormal: boolean
+  operator: string
+  at: string
+}
+
 export type OverviewResult = {
   cards: { label: string; value: number }[]
   modules: { name: string; created: number; pending: number; abnormal: number }[]
